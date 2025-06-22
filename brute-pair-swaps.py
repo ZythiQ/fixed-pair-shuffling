@@ -34,7 +34,7 @@ def batch_get_combos(sequence:list, pair_groups:list[tuple]):
     return [get_combos(sequence, group) for group in pair_groups]
 
 
-def get_optimal_pairs(sequence:list, min_pairs:int = 0, chunk_size:int = 1000, prune_duplicates:bool = True) -> list[tuple[int, tuple]]:
+def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:bool = True) -> list[tuple[int, tuple]]:
     '''Returns the optimal sequential pairs to shuffle the given integer sequence.'''
     
     optimal = []
@@ -45,7 +45,7 @@ def get_optimal_pairs(sequence:list, min_pairs:int = 0, chunk_size:int = 1000, p
     p = list(it.combinations(range(n), 2))
     
     max_pairs = math.comb(n, 2)
-    min_pairs = min_pairs if min_pairs else sum((n - 1) // k for k in range(1, n))
+    min_pairs = sum((n - 1) // k for k in range(1, n))
     
     while min_pairs <= max_pairs:
         combos = it.permutations(p, min_pairs)
@@ -87,10 +87,10 @@ def get_optimal_pairs(sequence:list, min_pairs:int = 0, chunk_size:int = 1000, p
     return optimal
 
 
-def save_optimal_pairs(sequence:list, min_pairs:int = 0, prune_duplicates:bool = True, data_dir:str = 'test'):
+def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str = 'test'):
     '''Generates and saves the optimal pairs as CSV and PKL.'''
 
-    results = get_optimal_pairs(sequence, min_pairs, prune_duplicates=prune_duplicates)
+    results = get_optimal_pairs(sequence, prune_duplicates=prune_duplicates)
     pairs = len(results[0][1])
     count = len(results)
     dups = results[0][0]
