@@ -49,7 +49,7 @@ def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:boo
     
     while min_pairs <= max_pairs:
         combos = it.permutations(p, min_pairs)
-        total = math.perm(max_pairs, min_pairs)
+        total = math.perm(max_pairs, min_pairs) # Wonky results from splitting symmetrically (though same binary pattern).
         
         with ProcessPoolExecutor() as executor, tqdm(combos, total=total, desc=f'Computing {min_pairs}-pair combos') as progress:
             while (chonk := list(it.islice(combos, chunk_size))):
