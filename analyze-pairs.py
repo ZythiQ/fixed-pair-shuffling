@@ -49,6 +49,8 @@ def get_pair_occurrence(filepath: str):
 
 
 def make_matrix_heatmap(matrix, filepath:str):
+    '''Saves a heat map of a labeled co-occurrence matrix.'''
+
     labels = matrix[0, 1:].tolist()
     data = matrix[1:, 1:].astype(float)
     
@@ -67,6 +69,11 @@ def make_matrix_heatmap(matrix, filepath:str):
     plt.savefig(filepath)
 
 
+def as_binary(matrix):
+    '''Converts a labeled co-occurrence matrix into a flat list of binary values.'''
+    return ((matrix[1:, 1:] != 0).astype(int)).flatten().tolist()
+
+
 if __name__ == '__main__':
     matrices = []
     pickles = [
@@ -80,6 +87,7 @@ if __name__ == '__main__':
         distict, matrix = get_pair_occurrence(f'data/pickled/{pkl}')
         matrices.append(matrix)
 
-        print(f'{pkl} Distinct pairs: {distict}')
+        print(f'{pkl} -> {distict}')
+        print(f'{pkl} -> {as_binary(matrix)}')
 
     [make_matrix_heatmap(m, f'data/figures/{p.rstrip(".pkl")}') for m, p in zip(matrices, pickles)]
