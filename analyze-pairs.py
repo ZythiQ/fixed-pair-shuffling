@@ -10,7 +10,7 @@ def load_data(filepath:str) -> object:
         return pickle.load(file)
 
 
-def get_pair_occurrence(filepath: str):
+def get_pair_occurrence(filepath:str, labeled:bool = True):
     '''Finds distinct pairs and co-occurrences.'''
 
     coccurence = Counter()
@@ -45,7 +45,7 @@ def get_pair_occurrence(filepath: str):
                 key1 = (pair1, pair2) if pix[pair1] < pix[pair2] else (pair2, pair1)
                 matrix[i + 1, j + 1] = coccurence.get(key1, 0)
     
-    return all_pairs, matrix
+    return all_pairs, matrix if labeled else matrix[1:, 1:]
 
 
 def make_matrix_heatmap(matrix, filepath:str):
@@ -71,7 +71,7 @@ def make_matrix_heatmap(matrix, filepath:str):
 
 def as_binary(matrix):
     '''Converts a labeled co-occurrence matrix into a flat list of binary values.'''
-    return ((matrix[1:, 1:] != 0).astype(int)).flatten().tolist()
+    return ((matrix != 0).astype(int)).flatten().tolist()
 
 
 if __name__ == '__main__':
@@ -85,9 +85,7 @@ if __name__ == '__main__':
 
     for pkl in pickles:
         distict, matrix = get_pair_occurrence(f'data/pickled/{pkl}')
-        matrices.append(matrix)
-
         print(f'{pkl} -> {distict}')
-        print(f'{pkl} -> {as_binary(matrix)}')
+        matrices.append(matrix)
 
     [make_matrix_heatmap(m, f'data/figures/{p.rstrip(".pkl")}') for m, p in zip(matrices, pickles)]
