@@ -87,7 +87,7 @@ def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:boo
     return optimal
 
 
-def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str = 'test'):
+def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str = 'data'):
     '''Generates and saves the optimal pairs as CSV and PKL.'''
 
     results = get_optimal_pairs(sequence, prune_duplicates=prune_duplicates)
