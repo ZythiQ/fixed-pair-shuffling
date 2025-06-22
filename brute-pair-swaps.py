@@ -45,7 +45,7 @@ def get_optimal_pairs(sequence:list, min_pairs:int = 0, chunk_size:int = 1000, p
     p = list(it.combinations(range(n), 2))
     
     max_pairs = math.comb(n, 2)
-    min_pairs = min_pairs if min_pairs else math.ceil(math.log2(m))
+    min_pairs = min_pairs if min_pairs else sum((n - 1) // k for k in range(1, n))
     
     while min_pairs <= max_pairs:
         combos = it.permutations(p, min_pairs)
@@ -87,7 +87,7 @@ def get_optimal_pairs(sequence:list, min_pairs:int = 0, chunk_size:int = 1000, p
     return optimal
 
 
-def save_optimal_pairs(sequence:list, min_pairs:int = 0, prune_duplicates:bool = True, data_dir:str = 'data'):
+def save_optimal_pairs(sequence:list, min_pairs:int = 0, prune_duplicates:bool = True, data_dir:str = 'test'):
     '''Generates and saves the optimal pairs as CSV and PKL.'''
 
     results = get_optimal_pairs(sequence, min_pairs, prune_duplicates=prune_duplicates)
@@ -111,4 +111,4 @@ if __name__ == '__main__':
     save_optimal_pairs([1,2])
     save_optimal_pairs([1,2,3])
     save_optimal_pairs([1,2,3,4])
-    save_optimal_pairs([1,2,3,4,5],8)
+    save_optimal_pairs([1,2,3,4,5])
