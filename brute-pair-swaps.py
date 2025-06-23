@@ -108,7 +108,5 @@ def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str
 
 
 if __name__ == '__main__':
-    save_optimal_pairs([1,2])
-    save_optimal_pairs([1,2,3])
-    save_optimal_pairs([1,2,3,4])
-    save_optimal_pairs([1,2,3,4,5])
+    for n in range(2, 10 + 1):
+        save_optimal_pairs([m for m in range(n)])
