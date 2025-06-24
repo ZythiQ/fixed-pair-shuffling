@@ -48,8 +48,8 @@ def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:boo
     min_pairs = sum((n - 1) // k for k in range(1, n))
     
     while min_pairs <= max_pairs:
-        combos = it.permutations(p, min_pairs)
-        total = math.perm(max_pairs, min_pairs) # Wonky results from splitting symmetrically (though same binary pattern).
+        total = math.factorial(max_pairs) // (2 if n > 2 else 1)
+        combos = it.islice(it.permutations(p, min_pairs), total)
         
         with ProcessPoolExecutor() as executor, tqdm(combos, total=total, desc=f'Computing {min_pairs}-pair combos') as progress:
             while (chonk := list(it.islice(combos, chunk_size))):
@@ -65,15 +65,18 @@ def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:boo
                         dups, distict, combo = result
                     
                         if distict == m:
+                            bizarro = tuple(reversed(combo))
+
                             if prune_duplicates:
                                 if dups < min_dup:
-                                    optimal = [(dups, combo)]
+                                    optimal = [(dups, combo), (dups, bizarro)] if n > 2 else [(dups, combo)]
                                     min_dup = dups
                                     
                                 elif dups == min_dup:
                                     heapq.heappush(optimal, (dups, combo))
+                                    heapq.heappush(optimal, (dups, bizarro))
                             else:
-                                optimal.append((dups, combo))
+                                optimal.extend([(dups, combo), (dups, bizarro)])
 
                     progress.update(len(chunk_result))
 
@@ -90,7 +93,7 @@ def get_optimal_pairs(sequence:list, chunk_size:int = 1000, prune_duplicates:boo
 def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str = 'data'):
     '''Generates and saves the optimal pairs as CSV and PKL.'''
 
-    results = get_optimal_pairs(sequence, prune_duplicates=prune_duplicates)
+    results = sorted(get_optimal_pairs(sequence, prune_duplicates=prune_duplicates))
     pairs = len(results[0][1])
     count = len(results)
     dups = results[0][0]
@@ -108,5 +111,5 @@ def save_optimal_pairs(sequence:list, prune_duplicates:bool = True, data_dir:str
 
 
 if __name__ == '__main__':
-    for n in range(2, 10 + 1):
+    for n in range(6, 6 + 1):
         save_optimal_pairs([m for m in range(n)])

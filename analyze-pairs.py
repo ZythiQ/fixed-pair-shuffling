@@ -1,4 +1,4 @@
-import pickle, numpy as np, pandas as pd, matplotlib.pyplot as plt, seaborn as sns # type: ignore
+import os, pickle, numpy as np, pandas as pd, matplotlib.pyplot as plt, seaborn as sns # type: ignore
 
 from collections import Counter
 
@@ -76,16 +76,10 @@ def as_binary(matrix):
 
 if __name__ == '__main__':
     matrices = []
-    pickles = [
-        'pruned_S2_P1_C1_D0.pkl',
-        'pruned_S3_P3_C6_D2.pkl',
-        'pruned_S4_P5_C96_D8.pkl',
-        'pruned_S5_P8_C1920_D56.pkl'
-    ]
 
-    for pkl in pickles:
+    for pkl in os.listdir('data/pickled'):
         distict, matrix = get_pair_occurrence(f'data/pickled/{pkl}')
+        matrices.append((matrix, pkl))
         print(f'{pkl} -> {distict}')
-        matrices.append(matrix)
 
-    [make_matrix_heatmap(m, f'data/figures/{p.rstrip(".pkl")}') for m, p in zip(matrices, pickles)]
+    [make_matrix_heatmap(m, f'data/figures/{p.rstrip(".pkl")}') for m, p in matrices]
