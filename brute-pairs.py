@@ -31,21 +31,33 @@ class PearTree:
         self.root = PearTree.Pear(Counter())
 
 
-    def __A089827(self, n:int) -> int:
+    @staticmethod
+    def __A089827(n:int, m:int) -> int:
         '''
-        Returns the lower-number of sequences for the {1..20} n-th pair in an optimal combination.
+        Returns the lower-number of sequences for the {1..20} m-th pair in an optimal combination.
         '''
-        return [2, 4, 8, 16, 24, 48, 80, 160, 320, 640, 1280, 2560, 3840, 7680, 15360, 30720, 61440, 122880, 184320, 368640][n - 1]
+        return n < 5 or [2, 4, 8, 16, 24, 48, 80, 160, 320, 640, 1280, 2560, 3840, 7680, 15360, 30720, 61440, 122880, 184320, 368640][m - 1]
     
 
-    def __A006218(self, n:int) -> int:
+    @staticmethod
+    def __A006218(n:int) -> int:
         '''
         Returns the lower-number of pairs to lazily swap a n-element sequence.
         '''
         return sum((n - 1) // k for k in range(1, n))
+    
+
+    @staticmethod
+    def __half_permutations(iterable, r:int):
+        '''
+        Returns half of the reversible successive r-length permutations of elements in the iterable. 
+        '''
+        for perm in it.permutations(iterable, r):
+            if perm <= perm[::-1]:
+                yield perm
 
 
-    def find_permutations(self, combination:tuple[tuple[int, int], ...]) -> Counter|None:
+    def find_permutations(self, combination:tuple[tuple[int, int], ...], elements:int) -> Counter|None:
         '''
         Lazily applies the pairs in combination and returns the frequency map of the root sequence's permutations.
         '''
@@ -65,7 +77,7 @@ class PearTree:
                     counter.update({seq: count, tuple(new_seq): count})
 
                 pear.leaves.update({
-                    pair: PearTree.Pear(counter, len(counter) < self.__A089827(ix + 1))
+                    pair: PearTree.Pear(counter, len(counter) < self.__A089827(elements, ix + 1))
                 })
 
             pear = pear.leaves.get(pair)
@@ -81,7 +93,6 @@ class PearTree:
 
         n = len(sequence)
         m = math.factorial(n)
-        min_dupe = float('inf')
         
         max_pairs = math.comb(n, 2)
         min_pairs = self.__A006218(n)
@@ -90,22 +101,17 @@ class PearTree:
         self.root = PearTree.Pear(Counter({sequence:1}))
 
         while min_pairs <= max_pairs:
-            total = math.perm(max_pairs, min_pairs)
-            combos = it.permutations(all_pairs, min_pairs)
+            total = max(1, math.perm(max_pairs, min_pairs) // 2)
+            combos = self.__half_permutations(all_pairs, min_pairs)
 
             with tqdm(combos, total=total, desc=f'Computing {min_pairs}-pair combos') as progress:
                 for combo in combos:
-                    counter = self.find_permutations(combo)
+                    counter = self.find_permutations(combo, n)
 
                     if counter and len(counter) == m:
-                        dupes = sum(c for c in counter.values() if c > 1)
-                        
-                        if dupes < min_dupe:
-                            optimal = [combo]
-                            min_dupe = dupes
-                            
-                        elif dupes == min_dupe:
-                            optimal.append(combo)
+                        if n > 2:
+                            optimal.append(tuple(reversed(combo)))
+                        optimal.append(combo)
 
                     progress.update()
 
