@@ -23,11 +23,10 @@ class PearTree:
             self.counter = counter
     
 
-    def __init__(self, batch:int = 1000) -> None:
+    def __init__(self) -> None:
         '''
         Initializes the PearTree.
         '''
-        self.batch = batch
         self.root = PearTree.Pear(Counter())
 
 
@@ -126,7 +125,9 @@ class PearTree:
     
 
 def save_combos(combinations:list[tuple[tuple[int, int], ...]], filename:str, save_dir:str):
-    '''Saves the a list of combinations as a Pickle and CSV.'''
+    '''
+    Saves the a list of combinations as a Pickle and CSV.
+    '''
 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(f'{save_dir}/csv', exist_ok=True)
@@ -143,10 +144,8 @@ def save_combos(combinations:list[tuple[tuple[int, int], ...]], filename:str, sa
             writer.writerow([f'({i}, {j})' for i, j in combo])
 
 
-if (__name__ == '__main__'):
-    '''
-    Naive brute-forcing optimal pair swaps.
-    '''
+if __name__ == '__main__':
+
     tree = PearTree()
 
     for i in range(5):
