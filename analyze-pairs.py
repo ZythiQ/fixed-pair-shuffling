@@ -16,7 +16,7 @@ def get_pair_occurrence(filepath:str, labeled:bool = True):
     coccurence = Counter()
     all_pairs = Counter()
     
-    for _, combo in load_data(filepath): # type: ignore
+    for combo in load_data(filepath): # type: ignore
         distinct = list(set(combo))
         all_pairs.update(combo)
         
