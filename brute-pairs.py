@@ -101,17 +101,17 @@ class PearTree:
         self.root = PearTree.Pear(Counter({sequence:1}))
 
         while min_pairs <= max_pairs:
-            total = max(1, math.perm(max_pairs, min_pairs) // 2)
             combos = self.__half_permutations(all_pairs, min_pairs)
+            total = math.perm(max_pairs, min_pairs) // 2
+
+            if n < 3: return list(combos)
 
             with tqdm(combos, total=total, desc=f'Computing {min_pairs}-pair combos') as progress:
                 for combo in combos:
                     counter = self.find_permutations(combo, n)
 
                     if counter and len(counter) == m:
-                        if n > 2:
-                            optimal.append(tuple(reversed(combo)))
-                        optimal.append(combo)
+                        optimal.extend([combo, tuple(reversed(combo))])
 
                     progress.update()
 
@@ -137,6 +137,7 @@ def save_combos(combinations:list[tuple[tuple[int, int], ...]], filename:str, sa
     
     with open(f"{save_dir}/csv/{filename}.csv", 'w', newline='') as file:
         writer = csv.writer(file)
+        writer.writerow([f'Pair {i}' for i in range(1, len(combinations[0]) + 1)])
 
         for combo in sorted(combinations):
             writer.writerow([f'({i}, {j})' for i, j in combo])
@@ -148,7 +149,6 @@ if (__name__ == '__main__'):
     '''
     tree = PearTree()
 
-    for i in range(2, 5 + 1):
-        combos = tree.find_combinations(tuple(n for n in range(1, i + 1)))
-
+    for i in range(5):
+        combos = tree.find_combinations(tuple(n for n in range(1, i + 2)))
         save_combos(combos, f'S{i}_P{len(combos[0]) if combos else 0}_C{len(combos)}', 'data')
