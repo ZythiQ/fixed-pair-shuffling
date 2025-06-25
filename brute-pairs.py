@@ -148,6 +148,6 @@ if __name__ == '__main__':
 
     tree = PearTree()
 
-    for i in range(5):
-        combos = tree.find_combinations(tuple(n for n in range(1, i + 2)))
+    for i in range(2, 5 + 1):
+        combos = tree.find_combinations(tuple(range(i)))
         save_combos(combos, f'S{i}_P{len(combos[0]) if combos else 0}_C{len(combos)}', 'data')
