@@ -111,13 +111,14 @@ class PearTree:
                     bar.update(total)
                     return list(combinations(range(2), 2))
                 
-                futures = [exe.submit(p.batch_find_sequence_permutations, c, n) for p, c in zip(pears, combs)]
+                while bar.n < total:
+                    futures = [exe.submit(p.batch_find_sequence_permutations, c, n) for p, c in zip(pears, combs)]
 
-                for future in futures:
-                    for combo, counter in future.result():
-                        if counter and len(counter) == expected_sequences:
-                            opt_combs.extend([combo, tuple(reversed(combo))])
-                        bar.update()
+                    for future in futures:
+                        for combo, counter in future.result():
+                            if counter and len(counter) == expected_sequences:
+                                opt_combs.extend([combo, tuple(reversed(combo))])
+                            bar.update()
 
             if opt_combs: break
             min_pairs += 1
