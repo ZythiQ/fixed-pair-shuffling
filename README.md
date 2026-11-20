@@ -2,7 +2,7 @@
 
 Generating a minimal sequence of lazy pair swaps to cover all N! combinations of a list of N-elements.
 
-## 🔀 Problem
+## The Problem
 
 Given a sequence of `N` **distinct integers**, find the **shortest sequence of lazy pair swaps** `(i, j)` — where `i < j` — such that, when each swap is applied **probabilistically** (with a 50% chance), the set of all possible outcomes **covers all `N!` permutations**.
 
@@ -15,6 +15,6 @@ The challenge is to find a minimal-length sequence of such swaps that, **when ex
 
 ---
 
-## 📁 Data
+## The Data
 
 I have generated pair sequences for `N < 6` so far and analyzed the co-occurrences within each combination. I plan to use this analysis to build a set generator that will greatly constrain the explosive search space so I can find pair combinations for `N > 10`.
